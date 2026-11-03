@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DST="$REPO_DIR/home"
+
+MANIFEST=(
+  "AGENTS.md"
+  ".pi/agent/settings.json"
+  ".pi/agent/agents"
+  ".pi/agent/extensions"
+  ".pi/agent/prompts"
+)
+
+say() { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
+
+say "Syncing live \$HOME configuration into the repo"
+for rel in "${MANIFEST[@]}"; do
+  from="$HOME/$rel"
+  to="$DST/$rel"
+  if [ ! -e "$from" ]; then
+    echo "   skip (not present in \$HOME): $rel"
+    continue
+  fi
+  mkdir -p "$(dirname "$to")"
+  rm -rf "$to"
+  cp -R "$from" "$to"
+  echo "   synced $rel"
+done
+
+find "$DST" -name node_modules -type d -prune -exec rm -rf {} + 2>/dev/null || true
+find "$REPO_DIR" -name '.DS_Store' -delete 2>/dev/null || true
+
+say "git status"
+git -C "$REPO_DIR" status --short || true
+
+cat <<'EOF'
+
+Review the changes above, then publish:
+  git add -A && git commit -m "sync: update pi setup" && git push
+EOF

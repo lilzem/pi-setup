@@ -1,0 +1,26 @@
+{
+  "lastChangelogVersion": "0.85.1",
+  "theme": "dark",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-8",
+  "providers": {
+    "anthropic": {
+      "modelOverrides": {
+        "claude-opus-4-8": {
+          "contextWindow": 500000
+        }
+      }
+    }
+  },
+  "enableSkillCommands": true,
+  "skills": [
+    "~/.claude/skills"
+  ],
+  "packages": [
+    "npm:context-mode",
+    "npm:@plannotator/pi-extension",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-lens"
+  ]
+}

@@ -1,0 +1,15 @@
+.DS_Store
+*.bak.*
+*.log
+
+**/node_modules/
+**/.venv/
+**/__pycache__/
+**/*.pyc
+
+home/.pi/agent/auth.json
+home/.pi/agent/models-store.json
+home/.pi/agent/trust.json
+home/.pi/agent/sessions/
+home/.pi/agent/npm/
+home/.pi/agent/bin/
