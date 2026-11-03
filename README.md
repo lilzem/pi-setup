@@ -47,7 +47,7 @@ in the commit message.
 ## Install
 
 ```bash
-git clone https://github.com/<your-username>/pi-setup.git
+git clone https://github.com/lilzem/pi-setup.git
 cd pi-setup
 ./install.sh
 ```
