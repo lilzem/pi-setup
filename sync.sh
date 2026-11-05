@@ -28,8 +28,13 @@ for rel in "${MANIFEST[@]}"; do
   echo "   synced $rel"
 done
 
-find "$DST" -name node_modules -type d -prune -exec rm -rf {} + 2>/dev/null || true
-find "$REPO_DIR" -name '.DS_Store' -delete 2>/dev/null || true
+while IFS= read -r junk; do
+  [ -n "$junk" ] && rm -rf "$junk"
+done < <(find "$DST" -name node_modules -type d -prune)
+
+while IFS= read -r junk; do
+  [ -n "$junk" ] && rm -f "$junk"
+done < <(find "$REPO_DIR" -name '.DS_Store')
 
 say "git status"
 git -C "$REPO_DIR" status --short || true

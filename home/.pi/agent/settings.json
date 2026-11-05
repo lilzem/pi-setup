@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "1.5.0",
   "theme": "dark",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-4-8",
@@ -21,6 +21,10 @@
     "npm:@plannotator/pi-extension",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@juicesharp/rpiv-todo",
-    "npm:pi-lens"
-  ]
+    "npm:pi-lens",
+    "npm:cc-safety-net"
+  ],
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.8"
+  }
 }
