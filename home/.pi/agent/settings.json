@@ -2,16 +2,19 @@
   "lastChangelogVersion": "1.5.0",
   "theme": "dark",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-8",
+  "defaultModel": "claude-opus-5-5",
   "providers": {
     "anthropic": {
       "modelOverrides": {
-        "claude-opus-4-8": {
+        "claude-opus-5-5": {
           "contextWindow": 500000
         }
       }
     }
   },
+  "extensions": [
+    "-builtin:mcp"
+  ],
   "enableSkillCommands": true,
   "skills": [
     "~/.claude/skills"
@@ -22,7 +25,8 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-lens",
-    "npm:cc-safety-net"
+    "npm:cc-safety-net",
+    "npm:pi-mcp-extension"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.8"
