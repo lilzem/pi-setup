@@ -74,3 +74,21 @@ Adapted from Uncle Bob's `ub-mode`. Every change follows three ordered phases:
 - **Worktree cleanup** — Find what's safe to remove, confirm nothing in use needs it, then reclaim. Uncommitted work waits for a decision. (`cleanup` subagent)
 - **Commit and push** — Commit often in small ordered commits; each says why, what changed, and how you proved it. Push to the main line at the end.
 <!-- END:ub-mode -->
+
+<!-- BEGIN:pi-setup-autosync -->
+# pi-setup auto-sync (self-triggered)
+
+The repo `~/pi-setup` mirrors the live pi configuration and feeds a daily update-digest
+workflow, so drift must be folded back promptly. Trigger a sync yourself — never wait to
+be asked — whenever either happens:
+
+- A digest (or similar update note) led me to update the live setup under any synced
+  manifest path: `~/AGENTS.md`, `~/.pi/agent/settings.json`, `~/.pi/agent/agents`,
+  `~/.pi/agent/extensions`, `~/.pi/agent/prompts`.
+- I adjusted this global `~/AGENTS.md` (not a project-local `AGENTS.md`) at the user's
+  request.
+
+Sync means: run `~/pi-setup/sync.sh`, then `git -C ~/pi-setup add -A && commit && push`
+automatically — no approval step. Scope is strictly the pi-setup manifest; never capture
+secrets or session data. State in one line what was synced and that it was pushed.
+<!-- END:pi-setup-autosync -->
