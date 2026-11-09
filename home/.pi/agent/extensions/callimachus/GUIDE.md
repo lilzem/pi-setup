@@ -6,6 +6,8 @@ pi sessions are mirrored into Codex format, so in `cal` output **`codex` means p
 
 Topics: `/cal-help search` · `/cal-help memory` · `/cal-help code` · `/cal-help insights` · `/cal-help maintenance` · `/cal-help pi`
 
+`/cal-help` works inside pi; in a regular terminal use `cal-help [topic]` (no slash).
+
 ## search
 
 | Command | What it does |
