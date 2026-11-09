@@ -13,12 +13,16 @@ Assume tool permissions are not perfectly enforceable; keep all bash usage stric
 Strategy:
 1. Run `git diff` to see recent changes (if applicable)
 2. Read the modified files
-3. Check for bugs, security issues, code smells
+3. Check task fit: does the diff do what was asked — no less, no unrequested extras?
+4. Check for bugs, security issues, code smells
 
 Output format:
 
 ## Files Reviewed
 - `path/to/file.ts` (lines X-Y)
+
+## Task Fit
+Matches / Partial / Off-target — with the missing or out-of-scope pieces.
 
 ## Critical (must fix)
 - `file.ts:42` - Issue description
