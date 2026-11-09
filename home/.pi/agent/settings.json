@@ -29,6 +29,6 @@
     "npm:pi-mcp-extension"
   ],
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.9"
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.10"
   }
 }
