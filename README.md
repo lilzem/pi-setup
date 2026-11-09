@@ -14,9 +14,10 @@ home/
   AGENTS.md                      Global guidelines applied to every session
   .pi/agent/
     settings.json                Provider, model, package, and skill configuration
-    agents/                      Subagent roster (scout, planner, worker, reviewer, cleanup)
+    agents/                      Subagent roster (scout, planner, contrarian, worker, reviewer, cleanup)
     extensions/                  Lifecycle extensions (TypeScript, loaded by pi)
-      ub-mode/                   Quality gate: runs crapper/dryer on edits, blocks bad commits
+      ub-mode/                   Quality gate: crapper/dryer on edits, blocks bad commits, loop brake
+      callimachus/               Mirrors pi sessions into the Callimachus index; /cal-help, /cal-sync, cal-recall skill
       subagent/                  Subagent discovery and dispatch
       auto-cleanup/              Post-task tidy pass
       no-comments.ts             Rejects code comments on write
@@ -38,6 +39,19 @@ The `ub-mode` extension wires Uncle Bob's companion tools into pi as determinist
 On every edit the gate appends a routing note (which subagent should fix what); on
 `git commit` it hard-blocks until the changed files pass. Bypass once with `[skip-ub]`
 in the commit message.
+
+The **loop brake** blocks a bash command that already failed twice in a row with no file
+edit in between; any edit or write resets it.
+
+### Callimachus (session history search)
+
+The `callimachus` extension needs the standalone `cal` CLI at `~/.local/bin/cal` (it is a
+no-op without it). Install the `cal-<target>` binary from
+[BetaBots-LLC/callimachus releases](https://github.com/BetaBots-LLC/callimachus/releases),
+verify it against `SHA256SUMS`, then run `cal index` and `cal embed`. Inside pi, run
+`/cal-sync` once to mirror pi sessions (as Codex-format rollouts in
+`~/.local/share/callimachus-pi`, so `codex` in `cal` output means pi), and `/cal-help` for
+the usage guide.
 
 ## Requirements
 

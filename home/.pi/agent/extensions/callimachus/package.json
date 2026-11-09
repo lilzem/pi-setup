@@ -1,0 +1,11 @@
+{
+  "name": "pi-ext-callimachus",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mirrors pi sessions into Callimachus (as Codex rollouts), adds /cal-help, /cal-sync and the cal-recall skill",
+  "main": "index.ts",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
+}
