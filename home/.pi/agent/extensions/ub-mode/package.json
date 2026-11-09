@@ -3,5 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "ub-mode auto-gate: runs crapper/dryer on edits and commits, injects a subagent decision tree",
-  "main": "index.ts"
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
 }

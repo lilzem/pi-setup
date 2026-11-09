@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
+import { createLoopBrake } from "./loop-brake.ts";
 
 const HOME = os.homedir();
 const BIN = {
@@ -174,6 +175,22 @@ export default function (pi: ExtensionAPI) {
       .map((rel) => path.resolve(cwd, rel))
       .filter((abs) => isSource(abs) && fs.existsSync(abs));
   };
+
+  const brake = createLoopBrake();
+  const bashCommand = (input: unknown) => (input as { command?: string } | undefined)?.command ?? "";
+
+  pi.on("tool_result", async (event) => {
+    if (event.toolName === "bash") brake.recordRun(bashCommand(event.input), event.isError === true);
+    if (event.toolName === "edit" || event.toolName === "write") brake.recordChange();
+  });
+
+  pi.on("tool_call", async (event, ctx) => {
+    if (event.toolName !== "bash") return;
+    const reason = brake.check(bashCommand(event.input));
+    if (!reason) return;
+    ctx.ui.notify("ub-mode: loop brake blocked a repeated failing command", "warn");
+    return { block: true, reason };
+  });
 
   pi.on("before_agent_start", async (event) => {
     return { systemPrompt: event.systemPrompt + "\n\n" + DECISION_TREE };
