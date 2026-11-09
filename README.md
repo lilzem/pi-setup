@@ -51,8 +51,7 @@ no-op without it). Install the `cal-<target>` binary from
 verify it against `SHA256SUMS`, then run `cal index` and `cal embed`. Inside pi, run
 `/cal-sync` once to mirror pi sessions (as Codex-format rollouts in
 `~/.local/share/callimachus-pi`, so `codex` in `cal` output means pi), and `/cal-help` for
-the usage guide. For the same guide in a plain terminal, link the shell command:
-`ln -sf ~/.pi/agent/extensions/callimachus/bin/cal-help ~/.local/bin/cal-help`.
+the usage guide.
 
 ## Requirements
 
