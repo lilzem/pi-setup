@@ -26,7 +26,8 @@
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-lens",
     "npm:cc-safety-net",
-    "npm:pi-mcp-extension"
+    "npm:pi-mcp-extension",
+    "npm:pi-prs"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.10"
