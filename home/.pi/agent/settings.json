@@ -30,6 +30,6 @@
     "npm:pi-prs"
   ],
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.10"
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.11"
   }
 }
