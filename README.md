@@ -80,8 +80,12 @@ Optional: install Chrome's [Modern Web Guidance](https://github.com/GoogleChrome
 skill, which the scout (`legacy-scan`) and planner (`search`/`retrieve`) use on web UI tasks:
 
 ```bash
-npx modern-web-guidance@latest install
+DISABLE_TELEMETRY=1 npx modern-web-guidance@latest install
+echo 'export DISABLE_TELEMETRY=1' >> ~/.zshenv
 ```
+
+The agent prompts already pass `DISABLE_TELEMETRY=1`; the `~/.zshenv` export also opts out
+the skill's own commands in the main session.
 
 ## Updating / syncing
 
