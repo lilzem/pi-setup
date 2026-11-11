@@ -33,8 +33,13 @@ interface JsonEvent {
 
 function parseTools(raw: unknown): string[] | undefined {
 	let tools: string[] = [];
-	if (Array.isArray(raw)) tools = raw.filter((t): t is string => typeof t === "string");
-	else if (typeof raw === "string") tools = raw.split(",").map((t) => t.trim()).filter(Boolean);
+	if (Array.isArray(raw))
+		tools = raw.filter((t): t is string => typeof t === "string");
+	else if (typeof raw === "string")
+		tools = raw
+			.split(",")
+			.map((t) => t.trim())
+			.filter(Boolean);
 	return tools.length > 0 ? tools : undefined;
 }
 
@@ -43,9 +48,13 @@ function loadCleanupAgent(): CleanupAgentDef | null {
 	if (!fs.existsSync(filePath)) return null;
 	try {
 		const content = fs.readFileSync(filePath, "utf-8");
-		const { frontmatter, body } = parseFrontmatter<{ model?: unknown; tools?: unknown }>(content);
+		const { frontmatter, body } = parseFrontmatter<{
+			model?: unknown;
+			tools?: unknown;
+		}>(content);
 		return {
-			model: typeof frontmatter.model === "string" ? frontmatter.model : undefined,
+			model:
+				typeof frontmatter.model === "string" ? frontmatter.model : undefined,
 			tools: parseTools(frontmatter.tools),
 			systemPrompt: body,
 		};
@@ -66,12 +75,25 @@ function getPiInvocation(args: string[]): { command: string; args: string[] } {
 	return { command: "pi", args };
 }
 
-function buildCleanupArgs(agent: CleanupAgentDef, promptPath: string, files: string[]): string[] {
-	const args = ["--mode", "json", "-p", "--no-session", "--append-system-prompt", promptPath];
+function buildCleanupArgs(
+	agent: CleanupAgentDef,
+	promptPath: string,
+	files: string[],
+): string[] {
+	const args = [
+		"--mode",
+		"json",
+		"-p",
+		"--no-session",
+		"--append-system-prompt",
+		promptPath,
+	];
 	if (agent.model) args.push("--model", agent.model);
 	if (agent.tools?.length) args.push("--tools", agent.tools.join(","));
 	const fileList = files.map((f) => `- ${f}`).join("\n");
-	args.push(`Task: These files were modified this turn. Clean up basic warnings in them only.\n\n${fileList}`);
+	args.push(
+		`Task: These files were modified this turn. Clean up basic warnings in them only.\n\n${fileList}`,
+	);
 	return args;
 }
 
@@ -83,8 +105,11 @@ function lastAssistantText(line: string): string | null {
 	} catch {
 		return null;
 	}
-	if (event.type !== "message_end" || event.message?.role !== "assistant") return null;
-	const texts = (event.message.content ?? []).filter((part) => part.type === "text" && part.text);
+	if (event.type !== "message_end" || event.message?.role !== "assistant")
+		return null;
+	const texts = (event.message.content ?? []).filter(
+		(part) => part.type === "text" && part.text,
+	);
 	return texts.at(-1)?.text ?? null;
 }
 
@@ -99,7 +124,11 @@ function killOnAbort(proc: ReturnType<typeof spawn>, signal: AbortSignal) {
 	else signal.addEventListener("abort", kill, { once: true });
 }
 
-function spawnPi(args: string[], cwd: string, signal: AbortSignal): Promise<CleanupResult> {
+function spawnPi(
+	args: string[],
+	cwd: string,
+	signal: AbortSignal,
+): Promise<CleanupResult> {
 	return new Promise((resolve) => {
 		const invocation = getPiInvocation(args);
 		const proc = spawn(invocation.command, invocation.args, {
@@ -139,13 +168,22 @@ async function runCleanup(
 	files: string[],
 	signal: AbortSignal,
 ): Promise<CleanupResult> {
-	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "pi-cleanup-"));
+	const tmpDir = await fs.promises.mkdtemp(
+		path.join(os.tmpdir(), "pi-cleanup-"),
+	);
 	const promptPath = path.join(tmpDir, "cleanup-prompt.md");
 	try {
 		await withFileMutationQueue(promptPath, async () => {
-			await fs.promises.writeFile(promptPath, agent.systemPrompt, { encoding: "utf-8", mode: 0o600 });
+			await fs.promises.writeFile(promptPath, agent.systemPrompt, {
+				encoding: "utf-8",
+				mode: 0o600,
+			});
 		});
-		return await spawnPi(buildCleanupArgs(agent, promptPath, files), cwd, signal);
+		return await spawnPi(
+			buildCleanupArgs(agent, promptPath, files),
+			cwd,
+			signal,
+		);
 	} finally {
 		fs.rmSync(tmpDir, { recursive: true, force: true });
 	}
@@ -161,7 +199,8 @@ function summarize(report: string): string {
 	const needsReview = countNeedsReview(report);
 	const parts: string[] = [];
 	if (fixed > 0) parts.push(`${fixed} fix${fixed > 1 ? "es" : ""} applied`);
-	if (needsReview > 0) parts.push(`${needsReview} need${needsReview > 1 ? "" : "s"} review`);
+	if (needsReview > 0)
+		parts.push(`${needsReview} need${needsReview > 1 ? "" : "s"} review`);
 	return parts.length > 0 ? `Cleanup: ${parts.join(", ")}.` : "Cleanup done.";
 }
 
@@ -169,12 +208,15 @@ type Notify = (message: string, level: "info" | "warning") => void;
 
 function reportResult({ output, ok }: CleanupResult, notify: Notify) {
 	const trimmed = output.trim();
-	if (/^nothing to clean up\.?$/i.test(trimmed)) notify("Cleanup: nothing to fix.", "info");
+	if (/^nothing to clean up\.?$/i.test(trimmed))
+		notify("Cleanup: nothing to fix.", "info");
 	else notify(`${summarize(trimmed)}\n\n${trimmed}`, ok ? "info" : "warning");
 }
 
 function isDisabled(): boolean {
-	return process.env[CHILD_GUARD_ENV] === "1" || process.env[DISABLE_ENV] === "1";
+	return (
+		process.env[CHILD_GUARD_ENV] === "1" || process.env[DISABLE_ENV] === "1"
+	);
 }
 
 interface CleanupState {
@@ -183,13 +225,19 @@ interface CleanupState {
 	activeRun: AbortController | null;
 }
 
-function trackStart(state: CleanupState, event: { toolName: string; toolCallId: string; args: unknown }) {
+function trackStart(
+	state: CleanupState,
+	event: { toolName: string; toolCallId: string; args: unknown },
+) {
 	if (!MUTATING_TOOLS.has(event.toolName)) return;
 	const p = (event.args as { path?: string })?.path;
 	if (typeof p === "string" && p) state.pendingPaths.set(event.toolCallId, p);
 }
 
-function trackEnd(state: CleanupState, event: { toolCallId: string; isError: boolean }) {
+function trackEnd(
+	state: CleanupState,
+	event: { toolCallId: string; isError: boolean },
+) {
 	const p = state.pendingPaths.get(event.toolCallId);
 	if (!p) return;
 	state.pendingPaths.delete(event.toolCallId);
@@ -209,21 +257,36 @@ async function cleanupInBackground(
 		const result = await runCleanup(agent, cwd, files, controller.signal);
 		if (!controller.signal.aborted) reportResult(result, notify);
 	} catch (err) {
-		if (!controller.signal.aborted) notify(`Cleanup failed: ${String(err)}`, "warning");
+		if (!controller.signal.aborted)
+			notify(`Cleanup failed: ${String(err)}`, "warning");
 	} finally {
 		if (state.activeRun === controller) state.activeRun = null;
 	}
 }
 
-function startCleanup(state: CleanupState, ctx: { hasUI: boolean; cwd: string; ui: { notify: Notify } }) {
-	if (isDisabled() || !ctx.hasUI || state.activeRun || state.changedFiles.size === 0) return;
+function startCleanup(
+	state: CleanupState,
+	ctx: { hasUI: boolean; cwd: string; ui: { notify: Notify } },
+) {
+	if (
+		isDisabled() ||
+		!ctx.hasUI ||
+		state.activeRun ||
+		state.changedFiles.size === 0
+	)
+		return;
 	const files = Array.from(state.changedFiles);
 	state.changedFiles.clear();
 	const agent = loadCleanupAgent();
 	if (!agent) return;
 	const n = files.length;
-	ctx.ui.notify(`Cleanup: scanning ${n} changed file${n > 1 ? "s" : ""}...`, "info");
-	void cleanupInBackground(state, agent, ctx.cwd, files, (message, level) => ctx.ui.notify(message, level));
+	ctx.ui.notify(
+		`Cleanup: scanning ${n} changed file${n > 1 ? "s" : ""}...`,
+		"info",
+	);
+	void cleanupInBackground(state, agent, ctx.cwd, files, (message, level) =>
+		ctx.ui.notify(message, level),
+	);
 }
 
 function stopCleanup(state: CleanupState) {
@@ -232,7 +295,11 @@ function stopCleanup(state: CleanupState) {
 }
 
 export default function autoCleanupExtension(pi: ExtensionAPI) {
-	const state: CleanupState = { pendingPaths: new Map(), changedFiles: new Set(), activeRun: null };
+	const state: CleanupState = {
+		pendingPaths: new Map(),
+		changedFiles: new Set(),
+		activeRun: null,
+	};
 	pi.on("session_shutdown", async () => stopCleanup(state));
 	pi.on("tool_execution_start", async (event) => trackStart(state, event));
 	pi.on("tool_execution_end", async (event) => trackEnd(state, event));
