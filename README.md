@@ -76,6 +76,13 @@ cd pi-setup
 Then restart your shell and launch `pi` once — it restores the npm packages declared in
 `settings.json` and loads the extensions.
 
+Optional: install Chrome's [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance)
+skill, which the scout (`legacy-scan`) and planner (`search`/`retrieve`) use on web UI tasks:
+
+```bash
+npx modern-web-guidance@latest install
+```
+
 ## Updating / syncing
 
 After changing your live setup, fold the changes back into the repo and publish:

@@ -19,6 +19,7 @@ Strategy:
 2. Read key sections (not entire files)
 3. Identify types, interfaces, key functions
 4. Note dependencies between files
+5. If the task touches web UI (HTML/CSS/client-side JS/TSX), run `npx -y modern-web-guidance@latest legacy-scan <dir-of-affected-code>` scoped to the area the task touches, and keep only findings relevant to the task
 
 Output format:
 
@@ -45,6 +46,9 @@ function keyFunction() {
 
 ## Architecture
 Brief explanation of how the pieces connect.
+
+## Modern Web Findings (web UI tasks only)
+Relevant legacy-scan findings as `file:line - guide-id - one-line summary`, or "none". Omit this section for non-web tasks.
 
 ## Start Here
 Which file to look at first and why.
