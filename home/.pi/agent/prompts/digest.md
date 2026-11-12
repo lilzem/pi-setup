@@ -32,7 +32,7 @@ For each digest item, judge: real improvement for my workflow, not overlapping w
 Run `pi list` and `pi mcp list`; confirm new items load. Remind me to run `/reload` at the end.
 
 ## 7. Sync ~/pi-setup
-Run `~/pi-setup/sync.sh`, review `git -C ~/pi-setup status`/diff for secrets or session data (abort that file if found), then commit with a message naming the digest date and what was added/updated, and push. No approval step needed for the push.
+Run `~/pi-setup/sync.sh`. If it reports README coverage gaps, or anything user-visible was added or changed, update `~/pi-setup/README.md` to match and re-run until clean. Review `git -C ~/pi-setup status`/diff for secrets or session data (abort that file if found), then commit with a message naming the digest date and what was added/updated, and push. No approval step needed for the push.
 
 ## 8. Report
 A short table: item → action taken (installed / built / updated / skipped + reason), plus the pushed commit SHA.

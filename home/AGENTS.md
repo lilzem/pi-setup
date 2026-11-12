@@ -82,8 +82,9 @@ be asked — whenever either happens:
 - I adjusted this global `~/AGENTS.md` (not a project-local `AGENTS.md`) at the user's
   request.
 
-Sync means: run `~/pi-setup/sync.sh`, then `git -C ~/pi-setup add -A && commit && push`
-automatically — no approval step. Scope is strictly the pi-setup manifest; never capture
+Sync means: run `~/pi-setup/sync.sh`; if it reports README coverage gaps, or the diff adds or
+changes anything user-visible, update `~/pi-setup/README.md` to match; then
+`git -C ~/pi-setup add -A && commit && push` automatically — no approval step. Scope is strictly the pi-setup manifest; never capture
 secrets or session data. State in one line what was synced and that it was pushed.
 <!-- END:pi-setup-autosync -->
 
