@@ -23,7 +23,7 @@ home/
       auto-cleanup/              Post-task tidy pass
       no-comments.ts             Rejects code comments on write
       interrupt.ts               Interrupt handling
-    prompts/                     Prompt templates: scout-and-plan, implement, implement-and-review, digest
+    prompts/                     Prompt templates: scout-and-plan, implement, implement-and-review
 install.sh                       Deploy this repo into $HOME
 sync.sh                          Pull live $HOME config back into this repo, then check README coverage
 tools/readme-coverage.sh         Lists extensions, agents, prompts, and packages the README does not mention
@@ -62,16 +62,6 @@ per session.
 With `gh` authenticated, `pi-prs` shows review-thread and CI status for the current
 branch. `AGENTS.md` tells the agent how to verify each finding, fix it, reply in the thread,
 and resolve it.
-
-### Daily digest (`/digest`)
-
-`/digest [date]` reads the "Pi / Claude Code digest" email from Gmail, asks which items to
-apply, installs or builds them, runs `pi update` and `pi update --extensions`, then syncs
-and pushes this repo. It needs a `gmail` MCP server in `~/.pi/agent/mcp.json` (not synced):
-
-```json
-{ "mcpServers": { "gmail": { "command": "npx", "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"] } } }
-```
 
 ### The ub-mode quality gate
 
@@ -146,7 +136,8 @@ git add -A && git commit -m "sync: update pi setup" && git push
 captured. The same manifest drives both scripts, so install and sync stay in lockstep.
 
 `sync.sh` then runs `tools/readme-coverage.sh` and warns about any extension, agent, prompt,
-or package this README does not mention. Document it before committing.
+or package this README does not mention and is not listed in `readme-coverage.ignore`.
+Document it, or list it there to keep it out of the README, before committing.
 Test the check with `tools/readme-coverage.test.sh`.
 
 ## Security

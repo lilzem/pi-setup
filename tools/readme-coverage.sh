@@ -4,6 +4,7 @@ set -euo pipefail
 REPO_DIR="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 AGENT_DIR="$REPO_DIR/home/.pi/agent"
 README="$REPO_DIR/README.md"
+IGNORE="$REPO_DIR/readme-coverage.ignore"
 
 list_extensions() {
   [ -d "$AGENT_DIR/extensions" ] || return 0
@@ -26,6 +27,10 @@ for entry in json.load(open(sys.argv[1])).get("packages", []):
 PY
 }
 
+ignored() {
+  [ -f "$IGNORE" ] && grep -qxF "$1" "$IGNORE"
+}
+
 mentioned() {
   local escaped
   escaped="$(printf '%s' "$1" | sed 's/[][\.*^$+?(){}|/]/\\&/g')"
@@ -36,7 +41,7 @@ missing=()
 check() {
   local kind="$1" name
   while IFS= read -r name; do
-    if [ -n "$name" ] && ! mentioned "$name"; then missing+=("$kind $name"); fi
+    if [ -n "$name" ] && ! ignored "$kind $name" && ! mentioned "$name"; then missing+=("$kind $name"); fi
   done
 }
 

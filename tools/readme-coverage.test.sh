@@ -45,4 +45,9 @@ printf 'known-extension single scout digest pi-lens @scope/pkg new-ext\n' > "$ro
 expect "partial word does not count as a mention" 1 "README.md does not mention:
   extension known-ext" "$root"
 
+root="$(make_fixture)"
+printf 'known-ext single scout pi-lens @scope/pkg\n' > "$root/README.md"
+printf 'prompt digest\nextension new-ext\n' > "$root/readme-coverage.ignore"
+expect "items in readme-coverage.ignore are not required" 0 "" "$root"
+
 exit $((failures > 0))
