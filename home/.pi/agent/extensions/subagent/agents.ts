@@ -13,6 +13,8 @@ export interface AgentConfig {
 	description: string;
 	tools?: string[];
 	model?: string;
+	maxTokens?: number;
+	maxMinutes?: number;
 	systemPrompt: string;
 	source: "user" | "project";
 	filePath: string;
@@ -36,6 +38,8 @@ type AgentFrontmatter = {
 	description?: unknown;
 	tools?: unknown;
 	model?: unknown;
+	maxTokens?: unknown;
+	maxMinutes?: unknown;
 };
 
 /**
@@ -57,6 +61,10 @@ function parseToolList(value: unknown): string[] | undefined {
 		.map((t) => t.trim())
 		.filter(Boolean);
 	return tools.length > 0 ? tools : undefined;
+}
+
+export function parsePositiveNumber(value: unknown): number | undefined {
+	return typeof value === "number" && value > 0 ? value : undefined;
 }
 
 function loadAgentsFromDir(dir: string, source: "user" | "project"): AgentConfig[] {
@@ -96,6 +104,8 @@ function loadAgentsFromDir(dir: string, source: "user" | "project"): AgentConfig
 			description: frontmatter.description,
 			tools: parseToolList(frontmatter.tools),
 			model: typeof frontmatter.model === "string" ? frontmatter.model : undefined,
+			maxTokens: parsePositiveNumber(frontmatter.maxTokens),
+			maxMinutes: parsePositiveNumber(frontmatter.maxMinutes),
 			systemPrompt: body,
 			source,
 			filePath,

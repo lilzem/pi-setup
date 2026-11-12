@@ -1,0 +1,11 @@
+{
+  "name": "pi-ext-skill-router",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Routes user prompts to matching skills by pattern matching",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
+}

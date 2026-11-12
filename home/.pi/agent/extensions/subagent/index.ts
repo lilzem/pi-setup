@@ -28,6 +28,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.ts";
+import { createBudgetMonitor } from "./budget.ts";
 
 const MAX_PARALLEL_TASKS = 8;
 const MAX_CONCURRENCY = 4;
@@ -349,6 +350,21 @@ async function runSingleAgent(
 			});
 			let buffer = "";
 
+			const killProc = () => {
+				wasAborted = true;
+				monitor.stop();
+				proc.kill("SIGTERM");
+				setTimeout(() => proc.kill("SIGKILL"), 5000);
+			};
+
+			const monitor = createBudgetMonitor(
+				{
+					maxTokens: agent.maxTokens,
+					maxMinutes: agent.maxMinutes,
+				},
+				killProc
+			);
+
 			const processLine = (line: string) => {
 				if (!line.trim()) return;
 				let event: any;
@@ -358,6 +374,8 @@ async function runSingleAgent(
 					return;
 				}
 
+				monitor.observe(event);
+
 				if (event.type === "message_end" && event.message) {
 					const msg = event.message as Message;
 					currentResult.messages.push(msg);
@@ -366,10 +384,13 @@ async function runSingleAgent(
 						currentResult.usage.turns++;
 						const usage = msg.usage;
 						if (usage) {
-							currentResult.usage.input += usage.input || 0;
-							currentResult.usage.output += usage.output || 0;
+							const inputDelta = usage.input || 0;
+							const outputDelta = usage.output || 0;
+							const cacheWriteDelta = usage.cacheWrite || 0;
+							currentResult.usage.input += inputDelta;
+							currentResult.usage.output += outputDelta;
 							currentResult.usage.cacheRead += usage.cacheRead || 0;
-							currentResult.usage.cacheWrite += usage.cacheWrite || 0;
+							currentResult.usage.cacheWrite += cacheWriteDelta;
 							currentResult.usage.cost += usage.cost?.total || 0;
 							currentResult.usage.contextTokens = usage.totalTokens || 0;
 						}
@@ -381,7 +402,8 @@ async function runSingleAgent(
 				}
 
 				if (event.type === "tool_result_end" && event.message) {
-					currentResult.messages.push(event.message as Message);
+					const msg = event.message as Message;
+					currentResult.messages.push(msg);
 					emitUpdate();
 				}
 			};
@@ -399,27 +421,27 @@ async function runSingleAgent(
 
 			proc.on("close", (code) => {
 				if (buffer.trim()) processLine(buffer);
+				monitor.stop();
 				resolve(code ?? 0);
 			});
 
 			proc.on("error", () => {
+				monitor.stop();
 				resolve(1);
 			});
 
 			if (signal) {
-				const killProc = () => {
-					wasAborted = true;
-					proc.kill("SIGTERM");
-					setTimeout(() => {
-						if (!proc.killed) proc.kill("SIGKILL");
-					}, 5000);
-				};
 				if (signal.aborted) killProc();
 				else signal.addEventListener("abort", killProc, { once: true });
 			}
 		});
 
 		currentResult.exitCode = exitCode;
+		if (monitor.breachReason) {
+			currentResult.exitCode = 1;
+			currentResult.errorMessage = `budget exceeded: ${monitor.breachReason} (agent ${agentName})`;
+			return currentResult;
+		}
 		if (wasAborted) throw new Error("Subagent was aborted");
 		return currentResult;
 	} finally {

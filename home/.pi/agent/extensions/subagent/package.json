@@ -1,0 +1,11 @@
+{
+  "name": "pi-ext-subagent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Subagent delegation with per-agent budget limits",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
+}

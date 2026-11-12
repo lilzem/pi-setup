@@ -1,0 +1,57 @@
+[
+  {
+    "skill": "youtrack",
+    "patterns": ["(?-i:\\b(?!(?:UTF|ISO|ES|CVE|SHA|RFC|HTTP|HTTPS|TLS|AES|RSA|MD|UTC|GMT|COVID)-)[A-Z]{2,10}-\\d+\\b)", "youtrack"]
+  },
+  {
+    "skill": "github",
+    "patterns": ["github\\.com/[^\\s]+/(pull|issues)/\\d+", "\\bPR\\s*#?\\d+"]
+  },
+  {
+    "skill": "zendesk-macro-picker",
+    "patterns": ["zendesk", "\\bmacro\\b", "refund", "customer (email|message|ticket)"]
+  },
+  {
+    "skill": "modern-web-guidance",
+    "patterns": [
+      "\\b(css|html)\\b",
+      "\\b(modal|dialog|popover|dark mode|container quer|view transition|anchor position)"
+    ]
+  },
+  {
+    "skill": "funnel-walk",
+    "patterns": ["\\bfunnel\\b"]
+  },
+  {
+    "skill": "experiment-receipts",
+    "patterns": ["\\ba/?b test", "\\bexperiment\\b", "sample size"]
+  },
+  {
+    "skill": "metric-receipts",
+    "patterns": ["\\bmetrics?\\b", "\\bkpi\\b", "analytics summary"]
+  },
+  {
+    "skill": "prd-receipts",
+    "patterns": ["\\bprd\\b", "product (spec|ticket|requirements)"]
+  },
+  {
+    "skill": "plain-copy",
+    "patterns": ["\\bmicrocopy\\b", "\\bux (copy|writing)\\b", "\\b(button|landing|marketing|onboarding|error) copy\\b", "\\bcopywriting\\b"]
+  },
+  {
+    "skill": "pdf",
+    "patterns": ["\\.pdf\\b"]
+  },
+  {
+    "skill": "docx",
+    "patterns": ["\\.docx\\b", "word doc"]
+  },
+  {
+    "skill": "xlsx",
+    "patterns": ["\\.(xlsx|csv)\\b", "spreadsheet"]
+  },
+  {
+    "skill": "pptx",
+    "patterns": ["\\.pptx\\b", "slide deck"]
+  }
+]
