@@ -18,13 +18,59 @@ home/
     extensions/                  Lifecycle extensions (TypeScript, loaded by pi)
       ub-mode/                   Quality gate: crapper/dryer on edits, blocks bad commits, loop brake
       callimachus/               Mirrors pi sessions into the Callimachus index; /cal-help, /cal-sync, cal-recall skill
-      subagent/                  Subagent discovery and dispatch
+      subagent/                  Subagent discovery and dispatch, with per-run budgets
+      skill-router/              Suggests an installed skill when a prompt matches its route
       auto-cleanup/              Post-task tidy pass
       no-comments.ts             Rejects code comments on write
       interrupt.ts               Interrupt handling
-    prompts/                     Reusable prompt templates (scout-and-plan, implement, ...)
+    prompts/                     Prompt templates: scout-and-plan, implement, implement-and-review, digest
 install.sh                       Deploy this repo into $HOME
-sync.sh                          Pull live $HOME config back into this repo
+sync.sh                          Pull live $HOME config back into this repo, then check README coverage
+tools/readme-coverage.sh         Lists extensions, agents, prompts, and packages the README does not mention
+```
+
+### Packages
+
+Declared in `settings.json`; pi restores them on first launch.
+
+| Package | What it adds |
+|---|---|
+| `context-mode` | Keeps large tool output out of context (`ctx_execute`, `ctx_search`, ...) |
+| `@plannotator/pi-extension` | Interactive plan review with annotations; code/PR review |
+| `@juicesharp/rpiv-ask-user-question` | `ask_user_question` structured clarifying questions |
+| `@juicesharp/rpiv-todo` | `todo` task list |
+| `pi-lens` | LSP diagnostics, symbol search, module reports, ast-grep |
+| `cc-safety-net` | Blocks destructive commands and secret-file access |
+| `pi-mcp-extension` | MCP client (`mcp_connect`, ...); servers live in `~/.pi/agent/mcp.json` |
+| `pi-prs` | Tracks the current branch's PR; `/pr watch --babysit` feeds review threads and CI failures back in |
+
+### Subagents and budgets
+
+The `subagent` extension runs the roster in single, parallel, or chain mode. Each run has
+a budget: 1M tokens and 30 minutes by default, overridable per agent with `maxTokens` and
+`maxMinutes` in its frontmatter. A run also stops after 5 consecutive tool failures or 5
+identical tool calls.
+
+### Skill router
+
+`skill-router/skill-routes.json` maps regex patterns to skill names. When a prompt matches
+and the skill is installed in `~/.claude/skills` or `~/.agents/skills`, pi suggests it once
+per session.
+
+### PR feedback loop
+
+With `gh` authenticated, `pi-prs` shows review-thread and CI status for the current
+branch. `AGENTS.md` tells the agent how to verify each finding, fix it, reply in the thread,
+and resolve it.
+
+### Daily digest (`/digest`)
+
+`/digest [date]` reads the "Pi / Claude Code digest" email from Gmail, asks which items to
+apply, installs or builds them, runs `pi update` and `pi update --extensions`, then syncs
+and pushes this repo. It needs a `gmail` MCP server in `~/.pi/agent/mcp.json` (not synced):
+
+```json
+{ "mcpServers": { "gmail": { "command": "npx", "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"] } } }
 ```
 
 ### The ub-mode quality gate
@@ -98,6 +144,10 @@ git add -A && git commit -m "sync: update pi setup" && git push
 
 `sync.sh` copies only the curated manifest paths, so secrets and session data are never
 captured. The same manifest drives both scripts, so install and sync stay in lockstep.
+
+`sync.sh` then runs `tools/readme-coverage.sh` and warns about any extension, agent, prompt,
+or package this README does not mention. Document it before committing.
+Test the check with `tools/readme-coverage.test.sh`.
 
 ## Security
 

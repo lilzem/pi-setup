@@ -36,6 +36,13 @@ while IFS= read -r junk; do
   [ -n "$junk" ] && rm -f "$junk"
 done < <(find "$REPO_DIR" -name '.DS_Store')
 
+say "README coverage"
+if "$REPO_DIR/tools/readme-coverage.sh"; then
+  echo "   README covers everything synced"
+else
+  echo "   update README.md before committing"
+fi
+
 say "git status"
 git -C "$REPO_DIR" status --short || true
 
