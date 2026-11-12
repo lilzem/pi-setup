@@ -24,7 +24,7 @@ For each digest item, judge: real improvement for my workflow, not overlapping w
 - Never paste or commit secrets.
 
 ## 5. Update existing
-- `pi update` for extensions/packages (not `pi update self` unless I ask). Report what changed version.
+- `pi update` (pi itself), then `pi update --extensions` (all installed packages). Report what changed version.
 - `npx skills update` if skills were installed via `npx skills`.
 - Note anything that failed to update and why.
 
