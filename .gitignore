@@ -13,3 +13,6 @@ home/.pi/agent/trust.json
 home/.pi/agent/sessions/
 home/.pi/agent/npm/
 home/.pi/agent/bin/
+
+**/target/coverage/
+**/.metrics/

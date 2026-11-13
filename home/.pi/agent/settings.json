@@ -27,7 +27,8 @@
     "npm:pi-lens",
     "npm:cc-safety-net",
     "npm:pi-mcp-extension",
-    "npm:pi-prs"
+    "npm:pi-prs",
+    "npm:@yefengr/pi-worktree"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12"

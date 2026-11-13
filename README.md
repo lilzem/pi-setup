@@ -20,10 +20,11 @@ home/
       callimachus/               Mirrors pi sessions into the Callimachus index; /cal-help, /cal-sync, cal-recall skill
       subagent/                  Subagent discovery and dispatch, with per-run budgets
       skill-router/              Suggests an installed skill when a prompt matches its route
+      skill-guard/               Warns when a loaded skill tells the agent to hide things from you
       auto-cleanup/              Post-task tidy pass
       no-comments.ts             Rejects code comments on write
       interrupt.ts               Interrupt handling
-    prompts/                     Prompt templates: scout-and-plan, implement, implement-and-review
+    prompts/                     Prompt templates: scout-and-plan, implement (starts in a new git worktree), implement-and-review
 install.sh                       Deploy this repo into $HOME
 sync.sh                          Pull live $HOME config back into this repo, then check README coverage
 tools/readme-coverage.sh         Lists extensions, agents, prompts, and packages the README does not mention
@@ -43,6 +44,7 @@ Declared in `settings.json`; pi restores them on first launch.
 | `cc-safety-net` | Blocks destructive commands and secret-file access |
 | `pi-mcp-extension` | MCP client (`mcp_connect`, ...); servers live in `~/.pi/agent/mcp.json` |
 | `pi-prs` | Tracks the current branch's PR; `/pr watch --babysit` feeds review threads and CI failures back in |
+| `@yefengr/pi-worktree` | Managed git worktrees: `/worktree:create`, `/worktree:switch`, safe removal; `worktree_*` tools |
 
 ### Subagents and budgets
 
@@ -56,6 +58,15 @@ identical tool calls.
 `skill-router/skill-routes.json` maps regex patterns to skill names. When a prompt matches
 and the skill is installed in `~/.claude/skills` or `~/.agents/skills`, pi suggests it once
 per session.
+
+### Skill guard
+
+`skill-guard` is a TypeScript port of
+[claude-skill-guard](https://github.com/fredfrazao/claude-skill-guard) (MIT). When the agent
+reads a `SKILL.md` or you run `/skill:<name>`, it scans the skill folder for concealment
+phrases ("do not tell the user", "silently send", including phrases split across lines or
+hidden with invisible characters). On a hit it shows a warning with file, line and phrase, and
+tells the model those instructions do not apply. Local files only, no network.
 
 ### PR feedback loop
 

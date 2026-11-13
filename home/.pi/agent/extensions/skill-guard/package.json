@@ -1,0 +1,11 @@
+{
+  "name": "pi-ext-skill-guard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Warns when a skill contains concealment instructions",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
+}
