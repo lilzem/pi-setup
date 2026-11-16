@@ -134,6 +134,19 @@ echo 'export DISABLE_TELEMETRY=1' >> ~/.zshenv
 The agent prompts already pass `DISABLE_TELEMETRY=1`; the `~/.zshenv` export also opts out
 the skill's own commands in the main session.
 
+Optional: install NVIDIA's [SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator)
+(Apache-2.0). The `/digest` prompt runs its local, LLM-free Tier 1 check (schema, quality,
+SkillSpector security scan, Gitleaks secrets scan) on every third-party skill it installs:
+
+```bash
+uv tool install skillevaluator
+uv tool install https://github.com/NVIDIA/SkillSpector/releases/download/v2.13.3/skillspector-2.13.3-py3-none-any.whl
+go install github.com/zricethezav/gitleaks/v8@v8.30.0
+skillevaluator validate "$(readlink -f ~/.claude/skills/<skill>)" --tiers 1 -r cli
+```
+
+Pass the resolved path: SkillEvaluator rejects symlinked skill folders.
+
 ## Updating / syncing
 
 After changing your live setup, fold the changes back into the repo and publish:

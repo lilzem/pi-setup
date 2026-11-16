@@ -19,7 +19,7 @@ Inspect before judging, so nothing already installed is re-added:
 For each digest item, judge: real improvement for my workflow, not overlapping what I have, safe (license, no third-party hosting of my code, no secrets leaving the machine), and effort. Then call `ask_user_question` once with a multiSelect listing every item as an option, the recommended ones first and marked "(Recommended)", each description stating the concrete action (install command, or the extension/prompt/skill you would write). Do only what I select.
 
 ## 4. Install / build
-- Packages: `pi install <source>`. Skills: install into `~/.claude/skills`.
+- Packages: `pi install <source>`. Skills: install into `~/.claude/skills`, then vet each with `skillevaluator validate "$(readlink -f <skill-dir>)" --tiers 1 -r cli` (local, no LLM). Remove the skill if the Security Scan or Secrets Detection check fails; report other findings.
 - Ports and ideas ("port as a small pi extension", "add prompts/x.md"): read the relevant pi docs first (`docs/extensions.md`, `docs/prompt-templates.md`, examples), follow ub-mode (smallest working version, tests where an honest test is possible, gates), and use `worker` + `reviewer` subagents for anything beyond a trivial file.
 - Never paste or commit secrets.
 

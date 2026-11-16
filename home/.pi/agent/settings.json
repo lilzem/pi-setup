@@ -31,6 +31,7 @@
     "npm:@yefengr/pi-worktree"
   ],
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12"
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12",
+    "{\"source\":\"npm:@yefengr/pi-worktree\",\"scope\":\"user\"}": "0.3.0"
   }
 }
