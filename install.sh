@@ -7,6 +7,7 @@ SRC="$REPO_DIR/home"
 MANIFEST=(
   "AGENTS.md"
   ".pi/agent/settings.json"
+  ".pi/agent/models.json"
   ".pi/agent/agents"
   ".pi/agent/extensions"
   ".pi/agent/prompts"

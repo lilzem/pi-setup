@@ -14,6 +14,7 @@ home/
   AGENTS.md                      Global guidelines applied to every session
   .pi/agent/
     settings.json                Provider, model, package, and skill configuration
+    models.json                  Model metadata overrides (context window)
     agents/                      Subagent roster (scout, planner, contrarian, worker, reviewer, cleanup)
     extensions/                  Lifecycle extensions (TypeScript, loaded by pi)
       ub-mode/                   Quality gate: crapper/dryer on edits, blocks bad commits, loop brake
@@ -48,7 +49,8 @@ Declared in `settings.json`; pi restores them on first launch.
 
 ### Model context window
 
-`settings.json` caps `claude-opus-5-5` at a 400K context window (`modelOverrides.contextWindow`).
+`models.json` caps `claude-opus-5-5` at a 400K context window (`providers.anthropic.modelOverrides`).
+pi ignores this block in `settings.json`; check the effective value with `pi --list-models opus-5-5`.
 This is a trial that started Nov 17, 2026 and replaced the 500K cap. Compare cost per session in
 pi's usage stats after a week, then keep one of the two values.
 

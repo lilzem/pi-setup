@@ -3,15 +3,6 @@
   "theme": "dark",
   "defaultProvider": "anthropic",
   "defaultModel": "claude-opus-5-5",
-  "providers": {
-    "anthropic": {
-      "modelOverrides": {
-        "claude-opus-5-5": {
-          "contextWindow": 400000
-        }
-      }
-    }
-  },
   "extensions": [
     "-builtin:mcp"
   ],

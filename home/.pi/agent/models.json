@@ -1,0 +1,12 @@
+{
+  "$schema": "https://pi.dev/schemas/models.schema.json",
+  "providers": {
+    "anthropic": {
+      "modelOverrides": {
+        "claude-opus-5-5": {
+          "contextWindow": 400000
+        }
+      }
+    }
+  }
+}
