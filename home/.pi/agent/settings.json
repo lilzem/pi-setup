@@ -7,7 +7,7 @@
     "anthropic": {
       "modelOverrides": {
         "claude-opus-5-5": {
-          "contextWindow": 500000
+          "contextWindow": 400000
         }
       }
     }
@@ -31,7 +31,7 @@
     "npm:@yefengr/pi-worktree"
   ],
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.12",
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.5.0",
     "{\"source\":\"npm:@yefengr/pi-worktree\",\"scope\":\"user\"}": "0.3.0"
   }
 }

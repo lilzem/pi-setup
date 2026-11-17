@@ -46,6 +46,12 @@ Declared in `settings.json`; pi restores them on first launch.
 | `pi-prs` | Tracks the current branch's PR; `/pr watch --babysit` feeds review threads and CI failures back in |
 | `@yefengr/pi-worktree` | Managed git worktrees: `/worktree:create`, `/worktree:switch`, safe removal; `worktree_*` tools |
 
+### Model context window
+
+`settings.json` caps `claude-opus-5-5` at a 400K context window (`modelOverrides.contextWindow`).
+This is a trial that started Nov 17, 2026 and replaced the 500K cap. Compare cost per session in
+pi's usage stats after a week, then keep one of the two values.
+
 ### Subagents and budgets
 
 The `subagent` extension runs the roster in single, parallel, or chain mode. Each run has

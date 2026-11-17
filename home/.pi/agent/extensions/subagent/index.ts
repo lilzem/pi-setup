@@ -340,6 +340,7 @@ async function runSingleAgent(
 
 		args.push(`Task: ${task}`);
 		let wasAborted = false;
+		let monitor!: ReturnType<typeof createBudgetMonitor>;
 
 		const exitCode = await new Promise<number>((resolve) => {
 			const invocation = getPiInvocation(args);
@@ -357,7 +358,7 @@ async function runSingleAgent(
 				setTimeout(() => proc.kill("SIGKILL"), 5000);
 			};
 
-			const monitor = createBudgetMonitor(
+			monitor = createBudgetMonitor(
 				{
 					maxTokens: agent.maxTokens,
 					maxMinutes: agent.maxMinutes,

@@ -53,5 +53,6 @@
   {
     "skill": "pptx",
     "patterns": ["\\.pptx\\b", "slide deck"]
-  }
+  },
+  { "skill": "edgrow-build", "patterns": ["\\bedg(r|cr)ow\\b", "\\breel player\\b", "\\bhabakkuk mock\\b"] }
 ]
