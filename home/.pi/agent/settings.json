@@ -22,7 +22,7 @@
     "npm:@yefengr/pi-worktree"
   ],
   "extensionChangelogVersions": {
-    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.5.0",
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.5.1",
     "{\"source\":\"npm:@yefengr/pi-worktree\",\"scope\":\"user\"}": "0.3.0"
   }
 }
