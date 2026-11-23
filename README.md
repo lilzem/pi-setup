@@ -24,6 +24,7 @@ home/
       skill-guard/               Warns when a skill or an MCP tool result tells the agent to hide things from you
       auto-cleanup/              Post-task tidy pass
       no-comments.ts             Rejects code comments on write
+      ste-style/                 Checks replies for Simplified Technical English and requests one rewrite
       interrupt.ts               Interrupt handling
     prompts/                     Prompt templates: scout-and-plan, implement (starts in a new git worktree), implement-and-review
 install.sh                       Deploy this repo into $HOME
@@ -84,6 +85,11 @@ Local only, no network.
 `AGENTS.md` sets the reply style to Simplified Technical English (ASD-STE100), the controlled
 English of aircraft maintenance manuals: short sentences, imperative steps, active voice, one
 word for one meaning. Code, commands and paths stay unchanged.
+
+The `ste-style` extension enforces it. It adds the rule to the system prompt and checks each
+final reply for sentence length, contractions, phrasal verbs, filler, idioms and slang. Code
+blocks, inline code, URLs and tables are skipped. On a violation it sends a hidden message that
+lists the problems and requests one rewrite per prompt.
 
 ### PR feedback loop
 

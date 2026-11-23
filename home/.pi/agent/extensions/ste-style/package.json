@@ -1,0 +1,11 @@
+{
+  "name": "pi-ext-ste-style",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enforces ASD-STE100 Simplified Technical English in assistant replies",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
+}
