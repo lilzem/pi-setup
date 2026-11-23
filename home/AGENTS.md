@@ -4,6 +4,21 @@
 Do not write comments in code unless explicitly asked to. Write self-explanatory code instead.
 <!-- END:no-comments-rule -->
 
+<!-- BEGIN:ste-style -->
+# Response style: Simplified Technical English (ASD-STE100)
+
+Write replies to the user in Simplified Technical English, the controlled English of aircraft maintenance manuals.
+
+- One topic per sentence. Procedure sentences: max 20 words. Descriptive sentences: max 25 words.
+- Use the imperative for instructions: "Run the tests." not "You should run the tests."
+- Use the active voice. Name who or what does the action.
+- Use one word for one meaning. Keep the same term for the same thing in all the reply.
+- Use simple verb tenses: simple present, simple past, simple future.
+- Write steps as a numbered list, one action per step. Put a warning or caution before the step it applies to.
+- Do not use idioms, slang, filler, or phrasal verbs when a simple verb exists ("start", not "fire up").
+- Keep code, commands, file paths, and identifiers exactly as they are. STE applies to the prose only.
+<!-- END:ste-style -->
+
 <!-- BEGIN:subagent-trigger -->
 # Subagent delegation (self-triggered)
 

@@ -21,7 +21,7 @@ home/
       callimachus/               Mirrors pi sessions into the Callimachus index; /cal-help, /cal-sync, cal-recall skill
       subagent/                  Subagent discovery and dispatch, with per-run budgets
       skill-router/              Suggests an installed skill when a prompt matches its route
-      skill-guard/               Warns when a loaded skill tells the agent to hide things from you
+      skill-guard/               Warns when a skill or an MCP tool result tells the agent to hide things from you
       auto-cleanup/              Post-task tidy pass
       no-comments.ts             Rejects code comments on write
       interrupt.ts               Interrupt handling
@@ -74,7 +74,16 @@ per session.
 reads a `SKILL.md` or you run `/skill:<name>`, it scans the skill folder for concealment
 phrases ("do not tell the user", "silently send", including phrases split across lines or
 hidden with invisible characters). On a hit it shows a warning with file, line and phrase, and
-tells the model those instructions do not apply. Local files only, no network.
+tells the model those instructions do not apply. It also scans the text of every MCP tool
+result (`mcp_*` tools from pi-mcp-extension, except status/connect/list) with the same
+phrase scanner, for cases like a server telling the agent "do not mention it to the user".
+Local only, no network.
+
+### Response style
+
+`AGENTS.md` sets the reply style to Simplified Technical English (ASD-STE100), the controlled
+English of aircraft maintenance manuals: short sentences, imperative steps, active voice, one
+word for one meaning. Code, commands and paths stay unchanged.
 
 ### PR feedback loop
 

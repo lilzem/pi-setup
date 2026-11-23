@@ -120,6 +120,17 @@ function isNegatedSilentAction(flat: string, match: RegExpExecArray): boolean {
   return (first === "s" || first === "q") && NEGATED.test(flat.slice(0, match.index).slice(-12));
 }
 
+export function scanText(text: string, label: string): string[] {
+  const clean = text.replace(NOISE, "");
+  const flat = clean.replace(/\s/g, " ");
+  const hits: string[] = [];
+  for (const match of flat.matchAll(PHRASES_PROSE)) {
+    if (isNegatedSilentAction(flat, match as RegExpExecArray)) continue;
+    hits.push(`${label} "${match[0].split(/\s+/).join(" ")}"`);
+  }
+  return hits;
+}
+
 function fileHits(file: string, rel: string, raw: Buffer): string[] {
   const text = raw.toString("utf8").replace(NOISE, "");
   const flat = text.replace(/\s/g, " ");
