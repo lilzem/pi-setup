@@ -4,6 +4,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import {
+	bashCommand,
 	gateGitCommand,
 	isGitCommitOrPush,
 	snapshot,
@@ -90,4 +91,10 @@ test("blocks the commit and names the files when cleanup changed them", async ()
 	assert.match(result!.reason, /\/repo\/a\.ts/);
 	assert.match(result!.reason, /\/repo\/b\.ts/);
 	assert.match(result!.reason, /run the same git command again/);
+});
+
+test("reads the command only from bash tool calls", () => {
+	assert.equal(bashCommand({ toolName: "bash", input: { command: "git push" } }), "git push");
+	assert.equal(bashCommand({ toolName: "edit", input: { command: "git push" } }), null);
+	assert.equal(bashCommand({ toolName: "bash", input: null }), null);
 });

@@ -82,6 +82,7 @@ Adapted from Uncle Bob's `ub-mode`. Every change follows three ordered phases:
 - **Guard the context window** — Keep the main thread small; push bulk work to subagents (see subagent-trigger rule) and keep only the summary.
 - **Worktree cleanup** — Find what's safe to remove, confirm nothing in use needs it, then reclaim. Uncommitted work waits for a decision. (`cleanup` subagent)
 - **Commit and push** — Commit often in small ordered commits; each says why, what changed, and how you proved it. Push to the main line at the end.
+- **Wait for cleanup before commit** — Do not commit or push while the `auto-cleanup` agent runs or has unscanned edits. The `auto-cleanup` extension holds `git commit`/`git push` until cleanup finishes. If it blocks with a file list, review those fixes with `git diff`, stage them, and run the same git command again. All fixes go into one commit; never make a second commit only for cleanup fixes.
 <!-- END:ub-mode -->
 
 <!-- BEGIN:pi-setup-autosync -->

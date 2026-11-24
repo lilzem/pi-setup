@@ -8,6 +8,7 @@ import {
 	parseFrontmatter,
 	withFileMutationQueue,
 } from "@earendil-works/pi-coding-agent";
+import { bashCommand, gateGitCommand, modifiedSince, snapshot } from "./gate.ts";
 
 const CHILD_GUARD_ENV = "PI_NO_AUTO_CLEANUP";
 const DISABLE_ENV = "PI_DISABLE_AUTO_CLEANUP";
@@ -219,10 +220,16 @@ function isDisabled(): boolean {
 	);
 }
 
+interface ActiveRun {
+	controller: AbortController;
+	done: Promise<void>;
+}
+
 interface CleanupState {
 	pendingPaths: Map<string, string>;
 	changedFiles: Set<string>;
-	activeRun: AbortController | null;
+	cleanupChanged: Set<string>;
+	activeRun: ActiveRun | null;
 }
 
 function trackStart(
@@ -244,24 +251,44 @@ function trackEnd(
 	if (!event.isError) state.changedFiles.add(p);
 }
 
-async function cleanupInBackground(
+async function runAndRecord(
 	state: CleanupState,
 	agent: CleanupAgentDef,
 	cwd: string,
 	files: string[],
 	notify: Notify,
+	signal: AbortSignal,
 ) {
-	const controller = new AbortController();
-	state.activeRun = controller;
+	const before = snapshot(files.map((file) => path.resolve(cwd, file)));
 	try {
-		const result = await runCleanup(agent, cwd, files, controller.signal);
-		if (!controller.signal.aborted) reportResult(result, notify);
+		const result = await runCleanup(agent, cwd, files, signal);
+		if (!signal.aborted) reportResult(result, notify);
 	} catch (err) {
-		if (!controller.signal.aborted)
-			notify(`Cleanup failed: ${String(err)}`, "warning");
+		if (!signal.aborted) notify(`Cleanup failed: ${String(err)}`, "warning");
 	} finally {
-		if (state.activeRun === controller) state.activeRun = null;
+		for (const file of modifiedSince(before)) state.cleanupChanged.add(file);
 	}
+}
+
+function launchRun(
+	state: CleanupState,
+	agent: CleanupAgentDef,
+	cwd: string,
+	files: string[],
+	notify: Notify,
+): Promise<void> {
+	const controller = new AbortController();
+	const done = runAndRecord(state, agent, cwd, files, notify, controller.signal).finally(() => {
+		if (state.activeRun?.controller === controller) state.activeRun = null;
+	});
+	state.activeRun = { controller, done };
+	return done;
+}
+
+function drain(set: Set<string>): string[] {
+	const files = Array.from(set);
+	set.clear();
+	return files;
 }
 
 function startCleanup(
@@ -275,8 +302,7 @@ function startCleanup(
 		state.changedFiles.size === 0
 	)
 		return;
-	const files = Array.from(state.changedFiles);
-	state.changedFiles.clear();
+	const files = drain(state.changedFiles);
 	const agent = loadCleanupAgent();
 	if (!agent) return;
 	const n = files.length;
@@ -284,13 +310,38 @@ function startCleanup(
 		`Cleanup: scanning ${n} changed file${n > 1 ? "s" : ""}...`,
 		"info",
 	);
-	void cleanupInBackground(state, agent, ctx.cwd, files, (message, level) =>
+	void launchRun(state, agent, ctx.cwd, files, (message, level) =>
 		ctx.ui.notify(message, level),
 	);
 }
 
+async function runPendingNow(state: CleanupState, cwd: string, notify: Notify) {
+	if (state.changedFiles.size === 0) return;
+	const agent = loadCleanupAgent();
+	if (!agent) return;
+	const files = drain(state.changedFiles);
+	notify(`Cleanup: scanning ${files.length} changed file(s) before git commit/push...`, "info");
+	await launchRun(state, agent, cwd, files, notify);
+}
+
+async function gateCommit(
+	state: CleanupState,
+	event: { toolName: string; input: unknown },
+	ctx: { hasUI: boolean; cwd: string; ui: { notify: Notify } },
+) {
+	const command = bashCommand(event);
+	if (!command || isDisabled() || !ctx.hasUI) return;
+	const notify: Notify = (message, level) => ctx.ui.notify(message, level);
+	return gateGitCommand(command, {
+		activeRun: () => state.activeRun?.done ?? null,
+		runPending: () => runPendingNow(state, ctx.cwd, notify),
+		drainChanged: () => drain(state.cleanupChanged),
+		notify: (message) => notify(message, "info"),
+	});
+}
+
 function stopCleanup(state: CleanupState) {
-	state.activeRun?.abort();
+	state.activeRun?.controller.abort();
 	state.activeRun = null;
 }
 
@@ -298,10 +349,12 @@ export default function autoCleanupExtension(pi: ExtensionAPI) {
 	const state: CleanupState = {
 		pendingPaths: new Map(),
 		changedFiles: new Set(),
+		cleanupChanged: new Set(),
 		activeRun: null,
 	};
 	pi.on("session_shutdown", async () => stopCleanup(state));
 	pi.on("tool_execution_start", async (event) => trackStart(state, event));
 	pi.on("tool_execution_end", async (event) => trackEnd(state, event));
 	pi.on("agent_settled", async (_event, ctx) => startCleanup(state, ctx));
+	pi.on("tool_call", async (event, ctx) => gateCommit(state, event, ctx));
 }

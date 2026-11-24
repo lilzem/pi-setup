@@ -1,0 +1,11 @@
+{
+  "name": "pi-ext-auto-cleanup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runs the cleanup agent on changed files and holds git commit/push until cleanup finishes",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test *.test.ts"
+  }
+}
