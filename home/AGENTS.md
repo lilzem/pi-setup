@@ -79,6 +79,7 @@ Adapted from Uncle Bob's `ub-mode`. Every change follows three ordered phases:
 ## Practice
 
 - **Keep a log** — Record each action and why; report it on completion. Offload bulk investigation to the `scout` subagent and keep only its summary.
+- **Log papercuts** — When a skill, tool, flag, or doc misleads you, append one line to `~/.pi/agent/papercuts.md`: date, item, what misled you, what was true. Fix them at the next pi-setup sync.
 - **Guard the context window** — Keep the main thread small; push bulk work to subagents (see subagent-trigger rule) and keep only the summary.
 - **Worktree cleanup** — Find what's safe to remove, confirm nothing in use needs it, then reclaim. Uncommitted work waits for a decision. (`cleanup` subagent)
 - **Commit and push** — Commit often in small ordered commits; each says why, what changed, and how you proved it. Push to the main line at the end.

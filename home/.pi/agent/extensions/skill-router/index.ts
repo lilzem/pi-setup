@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { isToolCallEventType, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import * as path from "node:path";
 import * as os from "node:os";
 import {
@@ -6,6 +6,7 @@ import {
   isSkillInstalled,
   matchSkills,
 } from "./router.ts";
+import { createUsageTracker, appendUsageLog } from "./usage-log.ts";
 
 const HOME = os.homedir();
 const ROUTES_PATH = path.join(
@@ -17,6 +18,8 @@ const ROUTES_PATH = path.join(
   "skill-routes.json",
 );
 
+const USAGE_LOG_PATH = path.join(HOME, ".pi", "agent", "skill-router-log.jsonl");
+
 const SKILL_DIRS = [
   path.join(HOME, ".claude", "skills"),
   path.join(HOME, ".agents", "skills"),
@@ -25,6 +28,15 @@ const SKILL_DIRS = [
 export default function (pi: ExtensionAPI) {
   const routes = loadRoutesFromFile(ROUTES_PATH);
   const suggestedInSession = new Set<string>();
+  const usage = createUsageTracker();
+
+  pi.on("tool_call", (event) => {
+    if (isToolCallEventType("read", event)) usage.observeRead(event.input.path);
+  });
+
+  pi.on("agent_settled", () => {
+    appendUsageLog(USAGE_LOG_PATH, usage.flush(), new Date());
+  });
 
   pi.on("session_start", () => {
     suggestedInSession.clear();
@@ -41,6 +53,7 @@ export default function (pi: ExtensionAPI) {
     if (toSuggest.length === 0) return {};
 
     toSuggest.forEach((skill) => suggestedInSession.add(skill));
+    usage.suggest(toSuggest);
 
     const hints = toSuggest
       .map(

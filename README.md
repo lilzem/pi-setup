@@ -66,7 +66,11 @@ identical tool calls.
 
 `skill-router/skill-routes.json` maps regex patterns to skill names. When a prompt matches
 and the skill is installed in `~/.claude/skills` or `~/.agents/skills`, pi suggests it once
-per session.
+per session. Each suggestion is logged to `~/.pi/agent/skill-router-log.jsonl` as
+`{ts, skill, loaded}` (no prompt text), where `loaded` means the agent read that skill's
+`SKILL.md` before the run settled. Use the log to delete routes that never fire or never load.
+Agents also log misleading skills, tools, or docs to `~/.pi/agent/papercuts.md` (see
+`AGENTS.md`); fix them at the next sync.
 
 ### Skill guard
 
@@ -156,6 +160,15 @@ echo 'export DISABLE_TELEMETRY=1' >> ~/.zshenv
 
 The agent prompts already pass `DISABLE_TELEMETRY=1`; the `~/.zshenv` export also opts out
 the skill's own commands in the main session.
+
+Optional: install [Bouncer](https://github.com/lunox-work/bouncer) (MIT, no telemetry).
+The `reviewer` agent adds a "Bouncer Proposal" when a task comes from a ticket, and the
+`implement-and-review` prompt asks you before it runs `bouncer id` (about 17 s, $0.06), which
+lists the decisions the agent made that the ticket never stated:
+
+```bash
+npx skills add lunox-work/bouncer -g
+```
 
 Optional: install NVIDIA's [SkillEvaluator](https://github.com/NVIDIA/SkillEvaluator)
 (Apache-2.0). The `/digest` prompt runs its local, LLM-free Tier 1 check (schema, quality,
